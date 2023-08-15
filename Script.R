@@ -141,3 +141,19 @@ dataset.diff
 k <- 3
 dataset.kmeans <- kmeans(x = dataset.norm, centers = k, iter.max = 20, nstart = 1000)
 dataset.kmeans
+
+stats.kmeans <- summary.stats(dataset.norm, dataset.kmeans$cluster,k)
+stats.kmeans
+# we have 3 clusters with  106, 74 and 117 observations respectively
+# First cluster consists of songs that are the newest, the longest
+# The acousticness of this songs is the lowest, meaning they are more likely to have higher proportion of digitally generated
+# sounds( such as synthesized instruments, electronic beets and processed vocals) and lower proportion of traditional acoustic
+# instruments like guitars, violins...
+# The energy of songs in this cluster is the highest, also the tempo and speechiness
+
+
+
+dataset$`Cluster participation` <- dataset.kmeans$cluster
+
+songs.1st.cluster <- dataset[dataset$`Cluster participation` == 1,1]
+songs.1st.cluster
