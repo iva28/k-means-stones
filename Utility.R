@@ -77,3 +77,19 @@ compute.eval.metrics <- function(cmatrix) {
   F1 <- 2*precision*recall / (precision + recall)
   c(accuracy = acc, precision = precision, recall = recall, F1 = F1)
 }
+
+# function for normalization
+normalize.var <- function(x) {
+  if (sum(x,na.rm = T) == 0) x
+  else ((x - min(x, na.rm = T)) / (max(x,na.rm = T) - min(x, na.rm = T)))
+}
+# function that computes the difference between two subsequent values
+compute.difference <- function(values) {
+  dif <- vector(mode = "numeric", length = length(values))
+  dif[1] <- NA
+  for(i in 1:(length(values)-1)) {
+    dif[i+1] <- abs(values[i+1] - values[i])
+  }
+  dif
+}
+

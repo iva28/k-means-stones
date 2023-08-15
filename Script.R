@@ -100,3 +100,44 @@ apply(X = dataset[,num.vars], # all numeric variables
 
 # checking summary
 summary(dataset[,num.vars])
+# rescaling variables, since for example values for variable 'Year Released' go from 1964 to 2016
+# whereas for variable 'Song duration' vary from 129.8 to 367.6
+
+dataset.norm <- as.data.frame(apply(dataset[,num.vars], MARGIN = 2, normalize.var))
+summary(dataset.norm)
+
+# checking for correlations among variables
+dataset.cor <- cor(dataset.norm)
+library(corrplot)
+corrplot.mixed(dataset.cor)
+# variables 'Year Recorded' and 'Year Released' are absolutely correlated
+# Also, variables 'energy' and 'loudness' are highly correlated
+# we will exclude 'Year Released' and loudness and examine again
+dataset.norm$`Year Released` <- NULL
+dataset.norm$loudness <- NULL
+
+# finding the best k
+eval.metrics <- data.frame()
+for (k in 2:8) {
+  set.seed(1)
+  km <- kmeans(dataset.norm, centers = k, iter.max = 20, nstart = 1000)
+  eval.metrics <- rbind(eval.metrics, c(k, km$tot.withinss, km$betweenss/km$totss))
+}
+colnames(eval.metrics) <- c("clusters", "tot.withinss","ratio")
+eval.metrics
+
+library(ggplot2)
+ggplot(data = eval.metrics, mapping = aes(x = 2:8, y = tot.withinss)) +geom_line() + geom_point()
+
+dataset.diff <- apply(eval.metrics[,2:3], MARGIN = 2,compute.difference)
+dataset.diff
+# the second column presents the decrease of tot.withinss when k+1
+# the third column presents the increase in ration (betweenss/totss) when k+1
+
+# the best values are for second row of dataset.diff when k = 3
+# for k = 3 there is the biggest decrease in totwithinss and the biggest increase in ration
+
+# doing k - means algorithm for k = 3
+k <- 3
+dataset.kmeans <- kmeans(x = dataset.norm, centers = k, iter.max = 20, nstart = 1000)
+dataset.kmeans
