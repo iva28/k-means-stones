@@ -145,15 +145,32 @@ dataset.kmeans
 stats.kmeans <- summary.stats(dataset.norm, dataset.kmeans$cluster,k)
 stats.kmeans
 # we have 3 clusters with  106, 74 and 117 observations respectively
+
 # First cluster consists of songs that are the newest, the longest
-# The acousticness of this songs is the lowest, meaning they are more likely to have higher proportion of digitally generated
+# The acousticness of these songs is the lowest, meaning they are more likely to have higher proportion of digitally generated
 # sounds( such as synthesized instruments, electronic beets and processed vocals) and lower proportion of traditional acoustic
 # instruments like guitars, violins...
 # The energy of songs in this cluster is the highest, also the tempo and speechiness
 
-
-
 dataset$`Cluster participation` <- dataset.kmeans$cluster
-
 songs.1st.cluster <- dataset[dataset$`Cluster participation` == 1,1]
 songs.1st.cluster
+
+# Second cluster consists of songs that are the shortest
+# The acousticness of these songs is higher, meaning they have larger proportion of traditional acoustic instruments( guitars, violins..)
+# The instrumentalness of these songs very high, meaning they are mostly instrumental and they lack significant vocal elements
+# The valence in the second cluster is the highest. Valence is an audio feature used for describing emotional mood or tone of songs( value near 0 implies sad/negative mood, value near 1 implies positive/happy mood)
+# Sings in this cluster, are the most positive and happy out of all songs from the discography
+
+songs.2nd.cluster <- dataset[dataset$`Cluster participation` == 2,1]
+songs.2nd.cluster
+
+# Third cluster consists of the songs that are the oldest and the acousticness of these songs is the highest
+# The energy feature is the lowest suggesting that these songs are the most soothing, relaxing and calm
+# Also the speechiness, tempo and valence have the lowest values for this cluster, meaning
+# that songs are more likely to be instrumental, with lower tempo and conveying negative emotional tone
+
+songs.3rd.cluster <- dataset[dataset$`Cluster participation` == 3,1]
+songs.3rd.cluster
+
+#create.comparison.plots(df = dataset.norm, clust = as.factor(dataset.kmeans$cluster))

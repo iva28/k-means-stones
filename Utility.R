@@ -115,3 +115,28 @@ summary.stats <- function(feature.set, clusters, cl.num) {
   rownames(sum.stats.transpose) <- NULL
   sum.stats.transpose
 }
+
+create.attr.boxplot <- function(df, attribute, clust_var) {
+  ggplot(data = df,
+         mapping = aes(x=.data[[clust_var]], 
+                       y=.data[[attribute]], 
+                       fill=.data[[clust_var]])) +
+    geom_boxplot() +
+    labs(y = attribute, x = "") +
+    theme_classic()
+}
+
+
+create.comparison.plots <- function(df, clust) {
+  library(dplyr)
+  library(ggpubr)
+  df_clust <- df
+  df_clust[['cluster']] <- clust
+  boxplots <- lapply(colnames(df), 
+                     function(x) create.attr.boxplot(df_clust, x, 'cluster'))
+  
+  ggarrange(plotlist = boxplots,
+            ncol = 3, nrow = 4,
+            common.legend = TRUE, legend = "bottom",
+            vjust = 1, hjust = -1, font.label = list(size=12))
+}
