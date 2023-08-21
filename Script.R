@@ -27,7 +27,6 @@ apply(X = dataset[,num.vars], # all numeric variables
 # Track number has 3, Song duration 10, instrumentalness 54, liveness 14, loudness 1,
 # speechiness 25, tempo 6 and valence 2 outliers
 
-
 # install.packages('DescTools')
 library(DescTools)
 # let's see outliers for 'Track number'
@@ -39,8 +38,8 @@ boxplot(track_number.w, xlab='Track number winsorized')
 
 # let's see outliers for 'Song duration'
 boxplot(dataset$`Song duration`, xlab =  'Song duration')
-# variable 'Song duration' has both overly low and high values
-# Low values will be replaced with 5th percentil, whereas high values will be replaced with 95th
+# variable 'Song duration' has both overly low and overly high values
+# Low values will be replaced with 5th percentile, whereas high values will be replaced with 95th
 song_duration.w <- Winsorize(dataset$`Song duration`, probs = c(0.05, 0.95))
 boxplot(song_duration.w, xlab = 'Song duration winsorized')
 
@@ -48,7 +47,7 @@ boxplot(song_duration.w, xlab = 'Song duration winsorized')
 boxplot(dataset$instrumentalness, xlab =  'instrumentalness')
 # variable 'instrumentalness' has only overly high values
 instrumentalness.w <- Winsorize(dataset$instrumentalness,probs = c(0,0.815))
-# for this variable, overly high values were replaced with 81.5th percentil
+# for this variable, overly high values were replaced with 81.5th percentile
 boxplot(instrumentalness.w, xlab = 'instrumentalness winsorized')
 
 # let's see outliers for 'liveness'
@@ -135,7 +134,9 @@ dataset.diff
 # the third column presents the increase in ration (betweenss/totss) when k+1
 
 # the best values are for second row of dataset.diff when k = 3
-# for k = 3 there is the biggest decrease in totwithinss and the biggest increase in ration
+# for k = 3 there is the biggest decrease in the tot.withinss which represents the sum	of	squared	differences	between	
+# individual	data	points	in	a	cluster	and	the	cluster	center for all clusters
+# for k = 3 there is the biggest increase in ratio as well
 
 # doing k - means algorithm for k = 3
 k <- 3
@@ -173,4 +174,16 @@ songs.2nd.cluster
 songs.3rd.cluster <- dataset[dataset$`Cluster participation` == 3,1]
 songs.3rd.cluster
 
-#create.comparison.plots(df = dataset.norm, clust = as.factor(dataset.kmeans$cluster))
+# Create scatter plot using ggplot2
+library(ggplot2)
+# Adding cluster participation column to dataset.norm
+dataset.norm$`Cluster participation` <- factor(dataset.kmeans$cluster)
+# Visualizing cluster participation of songs based on variables valence and instrumentalness
+ggplot(data=dataset.norm, aes(x=valence, y=instrumentalness, colour=`Cluster participation`)) +
+  geom_point() +
+  labs(x = "Emotional tone or mood",
+       y = "Presence of instrumental elements",
+       title = "The Rolling Stones songs") +
+  theme_bw() +
+  # add cluster centers
+  geom_point(data=as.data.frame(dataset.kmeans$centers), colour="black", size=3, shape=17)
